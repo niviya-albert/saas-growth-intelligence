@@ -166,7 +166,6 @@ if page == "Data Upload":
         "The system will analyse it automatically."
     )
 
-    # Required columns explainer
     with st.expander(
         "Required CSV format — click to see",
         expanded=False
@@ -175,7 +174,6 @@ if page == "Data Upload":
             "Your CSV must contain these columns "
             "(column names must match exactly):"
         )
-
         required_cols = pd.DataFrame({
             'Column': [
                 'customerID', 'tenure',
@@ -204,7 +202,6 @@ if page == "Data Upload":
             use_container_width=True,
             hide_index=True
         )
-
         st.markdown(
             "**Churn column:** accepts Yes/No text "
             "or 1/0 numbers.  \n"
@@ -214,7 +211,6 @@ if page == "Data Upload":
             "for reliable analysis."
         )
 
-    # File uploader
     uploaded_file = st.file_uploader(
         "Upload your customer CSV file",
         type=['csv'],
@@ -223,26 +219,20 @@ if page == "Data Upload":
 
     if uploaded_file is not None:
         try:
-            # Load uploaded data
             user_df = pd.read_csv(uploaded_file)
 
             st.markdown("---")
             st.subheader("Data Preview")
-
-            # Show shape
             st.markdown(
                 f"**Rows:** {len(user_df):,}  |  "
                 f"**Columns:** {user_df.shape[1]}"
             )
-
-            # Show first 5 rows
             st.dataframe(
                 user_df.head(),
                 use_container_width=True,
                 hide_index=True
             )
 
-            # ── VALIDATE REQUIRED COLUMNS ─────────────────
             required = [
                 'customerID', 'tenure',
                 'MonthlyCharges', 'TotalCharges',
@@ -257,34 +247,70 @@ if page == "Data Upload":
                 st.error(
                     f"Missing required columns: "
                     f"{', '.join(missing_cols)}  \n"
-                    f"Please check the format guide above "
-                    f"and re-upload."
+                    f"Please check the format guide "
+                    f"above and re-upload."
                 )
             else:
                 # ── BASIC CLEANING ────────────────────────
-                # Handle Yes/No Churn column
-                if user_df['Churn'].dtype == object:
-                    user_df['Churn'] = user_df[
-                        'Churn'
-                    ].map({'Yes': 1, 'No': 0})
+                # Step 1: Handle Churn column first
+                # Convert everything to string, strip spaces,
+                # then map to 0/1 regardless of format
+                churn_col = user_df['Churn'].astype(str).str.strip()
 
-                # Convert TotalCharges to numeric
+                churn_map = {
+                    'yes': 1, 'no': 0,
+                    'Yes': 1, 'No': 0,
+                    'YES': 1, 'NO': 0,
+                    '1': 1,   '0': 0,
+                    '1.0': 1, '0.0': 0,
+                    'true': 1, 'false': 0,
+                    'True': 1, 'False': 0
+                }
+
+                user_df['Churn'] = churn_col.map(churn_map)
+
+                # If any values still NaN after mapping
+                # try direct numeric conversion as fallback
+                still_null = user_df['Churn'].isnull().sum()
+                if still_null > 0:
+                    user_df['Churn'] = pd.to_numeric(
+                        churn_col, errors='coerce'
+                    )
+
+                # Drop rows where Churn could not be determined
+                user_df.dropna(subset=['Churn'], inplace=True)
+
+                # Convert to integer only after all nulls removed
+                user_df['Churn'] = user_df['Churn'].astype(int)
+
+                # Step 2: Convert TotalCharges to numeric
                 user_df['TotalCharges'] = pd.to_numeric(
                     user_df['TotalCharges'],
                     errors='coerce'
                 )
 
-                # Drop incomplete rows
+                # Drop rows where TotalCharges could not convert
+                # This handles blank strings like the Telco dataset
+                user_df.dropna(
+                    subset=['TotalCharges'],
+                    inplace=True
+                )
+                
+
+                user_df['TotalCharges'] = pd.to_numeric(
+                    user_df['TotalCharges'],
+                    errors='coerce'
+                )
                 user_df.dropna(
                     subset=['TotalCharges', 'Churn'],
                     inplace=True
                 )
 
-                # Calculate basic metrics
-                u_churn = round(
+                # ── METRICS ───────────────────────────────
+                u_churn     = round(
                     user_df['Churn'].mean() * 100, 2
                 )
-                u_mrr   = round(
+                u_mrr       = round(
                     user_df[
                         user_df['Churn']==0
                     ]['MonthlyCharges'].sum(), 0
@@ -296,7 +322,6 @@ if page == "Data Upload":
                 )
                 u_churn_arr = round(u_churn_mrr * 12, 0)
 
-                # Show quick summary
                 st.markdown("---")
                 st.subheader("Quick Analysis")
 
@@ -318,7 +343,23 @@ if page == "Data Upload":
                     f"${u_churn_arr:,.0f}"
                 )
 
-                # Contract churn breakdown
+                # ── WHAT IS VALID FOR UPLOADED DATA ───────
+                st.info(
+                    "📊 **Accurate for your data:**  \n"
+                    "- Churn rate and revenue impact ✓  \n"
+                    "- Contract type breakdown ✓  \n"
+                    "- Payment method analysis ✓  \n"
+                    "- Tenure lifecycle ✓  \n"
+                    "- Segment revenue risk ✓  \n\n"
+                    "📌 **Requires custom implementation "
+                    "on your data:**  \n"
+                    "- Individual customer risk scores  \n"
+                    "- ML churn predictions  \n"
+                    "- AI executive briefing  \n"
+                    "- Personalised retention actions"
+                )
+
+                # ── CONTRACT CHART ────────────────────────
                 if 'Contract' in user_df.columns:
                     st.markdown("**Churn by Contract:**")
                     ct = user_df.groupby('Contract')[
@@ -350,26 +391,30 @@ if page == "Data Upload":
                         use_container_width=True
                     )
 
-                # Save to session state
-                # so other pages can use it
+                # ── SAVE TO SESSION STATE ─────────────────
                 st.session_state['uploaded_df'] = user_df
                 st.session_state['data_mode']   = 'upload'
 
+                # ── SUCCESS + LIMITATION NOTE ─────────────
                 st.success(
-                    f"Data validated successfully. "
-                    f"{len(user_df):,} customers loaded.  \n"
-                    f"Navigate to any page to explore "
-                    f"your data."
+                    f"Data loaded — "
+                    f"{len(user_df):,} customers analysed. "
+                    f"Charts above reflect your data."
                 )
 
-                # Note about full analysis
-                st.info(
-                    "**Note:** The full risk scoring, "
-                    "ML predictions, and AI briefing "
-                    "on other pages use the pre-built "
-                    "demo models. For a fully customised "
-                    "analysis on your data, contact me "
-                    "to discuss a tailored engagement."
+                st.warning(
+                    "**Important:** The ML risk scores, "
+                    "individual customer profiles, and "
+                    "AI briefing on other pages were "
+                    "trained on a telecom SaaS dataset "
+                    "and will not accurately reflect "
+                    "your specific business patterns.  \n\n"
+                    "**For a fully customised system "
+                    "trained on your data — accurate "
+                    "risk scores, personalised "
+                    "recommendations, and an AI briefing "
+                    "for your business — contact me to "
+                    "discuss a tailored implementation.**"
                 )
 
         except Exception as e:
