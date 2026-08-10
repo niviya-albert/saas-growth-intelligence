@@ -1,16 +1,17 @@
-# Project Setup — Run These First
+# Project setup
 
-## Every time you open this project:
+Requires Python 3.11 or newer. From PowerShell in the project folder:
 
-1. Open terminal in VS Code
-2. Run: venv\Scripts\activate
-3. Confirm (venv) appears in terminal
-4. Select Python interpreter if needed:
-   Ctrl+Shift+P → Python: Select Interpreter
-   → Choose venv option
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+streamlit run app\streamlit_app.py
+```
 
-## If any package is missing:
-pip install [package-name]
+If `py -3.11` is unavailable, install Python from python.org and enable the
+Python Launcher during installation. Do not reuse a virtual environment copied
+from another machine; recreate `.venv` with the commands above.
 
-## To run notebooks:
-Open notebook → Select kernel → Python (venv)
+For notebooks, select the `.venv` interpreter as the Jupyter kernel.

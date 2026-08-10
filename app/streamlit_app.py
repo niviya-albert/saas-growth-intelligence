@@ -65,8 +65,48 @@ def load_reports():
         )
     return briefing, recs
 
-df, risk_df      = load_data()
+
+REQUIRED_UPLOAD_COLUMNS = {
+    'customerID', 'tenure', 'MonthlyCharges', 'TotalCharges',
+    'Contract', 'PaymentMethod', 'Churn'
+}
+
+
+def clean_uploaded_data(raw_df):
+    """Validate and normalize the fields used by the non-ML dashboards."""
+    missing = sorted(REQUIRED_UPLOAD_COLUMNS - set(raw_df.columns))
+    if missing:
+        return None, [f"Missing required columns: {', '.join(missing)}"], None
+
+    df_clean = raw_df.copy()
+    df_clean['Churn'] = (
+        df_clean['Churn'].astype(str).str.strip().str.lower().map({
+            'yes': 1, 'no': 0, 'true': 1, 'false': 0,
+            '1': 1, '0': 0, '1.0': 1, '0.0': 0
+        })
+    )
+    for column in ('tenure', 'MonthlyCharges', 'TotalCharges'):
+        df_clean[column] = pd.to_numeric(df_clean[column], errors='coerce')
+
+    valid_rows = (
+        df_clean['Churn'].isin([0, 1])
+        & df_clean['tenure'].ge(0)
+        & df_clean['MonthlyCharges'].ge(0)
+        & df_clean['TotalCharges'].ge(0)
+    )
+    dropped = int((~valid_rows).sum())
+    df_clean = df_clean.loc[valid_rows].copy()
+    if len(df_clean) < 100:
+        return None, [
+            f"At least 100 valid rows are required; found {len(df_clean)}."
+        ], None
+    return df_clean, [], dropped
+
+demo_df, risk_df  = load_data()
 briefing, recs   = load_reports()
+is_uploaded_data = st.session_state.get('data_mode') == 'upload' and \
+    'uploaded_df' in st.session_state
+df = st.session_state['uploaded_df'] if is_uploaded_data else demo_df
 
 # ── PRECOMPUTE METRICS ────────────────────────────────────
 total_customers = len(df)
@@ -92,6 +132,8 @@ total_churned   = int(df['Churn'].sum())
 risk_counts = {
     level: int((risk_df['risk_level'] == level).sum())
     for level in ['Critical', 'High', 'Medium', 'Low']
+} if not is_uploaded_data else {
+    level: 0 for level in ['Critical', 'High', 'Medium', 'Low']
 }
 critical_rev = round(
     risk_df[
@@ -119,8 +161,9 @@ st.sidebar.markdown("---")
 st.sidebar.markdown(
     f"**Dataset:** {total_customers:,} customers  \n"
     f"**Churn Rate:** {churn_rate}%  \n"
-    f"**Critical Alerts:** {risk_counts['Critical']:,}  \n"
-    f"**Annual Risk:** ${churn_arr/1e6:.2f}M"
+    + (f"**Critical Alerts:** {risk_counts['Critical']:,}  \n"
+       if not is_uploaded_data else "**Risk scoring:** demo-only  \n")
+    + f"**Historical churn value:** ${churn_arr/1e6:.2f}M"
 )
 st.sidebar.markdown("---")
 st.sidebar.markdown(
@@ -171,8 +214,8 @@ if page == "Data Upload":
         expanded=False
     ):
         st.markdown(
-            "Your CSV must contain these columns "
-            "(column names must match exactly):"
+            "The first seven columns are required for analysis. "
+            "The remaining columns are optional and enrich segment charts:"
         )
         required_cols = pd.DataFrame({
             'Column': [
@@ -233,24 +276,14 @@ if page == "Data Upload":
                 hide_index=True
             )
 
-            required = [
-                'customerID', 'tenure',
-                'MonthlyCharges', 'TotalCharges',
-                'Contract', 'PaymentMethod', 'Churn'
-            ]
-            missing_cols = [
-                c for c in required
-                if c not in user_df.columns
-            ]
-
-            if missing_cols:
-                st.error(
-                    f"Missing required columns: "
-                    f"{', '.join(missing_cols)}  \n"
-                    f"Please check the format guide "
-                    f"above and re-upload."
-                )
+            user_df, validation_errors, dropped_rows = clean_uploaded_data(user_df)
+            if validation_errors:
+                st.error("  \n".join(validation_errors))
             else:
+                if dropped_rows:
+                    st.warning(
+                        f"Excluded {dropped_rows:,} invalid rows before analysis."
+                    )
                 # ── BASIC CLEANING ────────────────────────
                 # Step 1: Handle Churn column first
                 # Convert everything to string, strip spaces,
@@ -438,9 +471,15 @@ if page == "Data Upload":
 if page == "Executive Dashboard":
 
     st.title("Executive Dashboard")
+    if is_uploaded_data:
+        st.info(
+            "Showing metrics calculated from your uploaded data. Individual "
+            "ML scores and the saved executive briefing are available only for "
+            "the bundled demo dataset."
+        )
     st.markdown(
-        "Real-time customer retention intelligence "
-        f"across {total_customers:,} active customers."
+        "Customer retention intelligence "
+        f"across {total_customers:,} records."
     )
     st.markdown("---")
 
@@ -455,12 +494,20 @@ if page == "Executive Dashboard":
             delta_color="inverse"
         )
     with c2:
-        st.metric(
-            label="Critical Risk Customers",
-            value=f"{risk_counts['Critical']:,}",
-            delta="Require immediate action",
-            delta_color="inverse"
-        )
+        if is_uploaded_data:
+            st.metric(
+                label="Individual risk scores",
+                value="Not scored",
+                delta="Upload analysis uses observed churn",
+                delta_color="off"
+            )
+        else:
+            st.metric(
+                label="Critical Risk Customers",
+                value=f"{risk_counts['Critical']:,}",
+                delta="Require immediate action",
+                delta_color="inverse"
+            )
     with c3:
         st.metric(
             label="Annual Revenue at Risk",
@@ -572,8 +619,10 @@ if page == "Executive Dashboard":
 
     # ── AI BRIEFING ───────────────────────────────────────
     st.subheader("AI-Generated Executive Briefing")
+    if is_uploaded_data:
+        st.caption("A saved demo briefing is not shown for uploaded data.")
 
-    if briefing:
+    if briefing and not is_uploaded_data:
         # ── CLEAN FILE HEADER LINES ───────────────────────
         # Remove the file header we added when saving
         # Keep only the actual AI-generated content
@@ -871,6 +920,13 @@ if page == "Executive Dashboard":
 # PAGE 2 — CUSTOMER RISK EXPLORER
 # ══════════════════════════════════════════════════════════
 elif page == "Customer Risk Explorer":
+
+    if is_uploaded_data:
+        st.info(
+            "Individual customer risk scoring requires a model trained for your "
+            "business. It is not shown for uploaded data."
+        )
+        st.stop()
 
     st.title("Customer Risk Explorer")
     st.markdown(
@@ -1279,34 +1335,38 @@ elif page == "Segment Analysis":
         'DeviceProtection', 'TechSupport',
         'StreamingTV', 'StreamingMovies', 'MultipleLines'
     ]
-    df_f = df_f.copy()
-    df_f['eng'] = df_f[service_cols].apply(
-        lambda col: (col == 'Yes').astype(int)
-    ).sum(axis=1)
+    service_cols = [column for column in service_cols if column in df_f]
+    if service_cols:
+        df_f = df_f.copy()
+        df_f['eng'] = df_f[service_cols].apply(
+            lambda col: (col == 'Yes').astype(int)
+        ).sum(axis=1)
 
-    eng = df_f.groupby('eng')[
-        'Churn'
-    ].mean().mul(100).round(1).reset_index()
-    eng.columns = ['Services Used', 'Churn Rate (%)']
+        eng = df_f.groupby('eng')[
+            'Churn'
+        ].mean().mul(100).round(1).reset_index()
+        eng.columns = ['Services Used', 'Churn Rate (%)']
 
-    fig4 = px.bar(
-        eng, x='Services Used', y='Churn Rate (%)',
-        color='Churn Rate (%)',
-        color_continuous_scale=[
-            '#27ae60', '#f1c40f', '#e74c3c'
-        ],
-        text='Churn Rate (%)'
-    )
-    fig4.update_traces(
-        texttemplate='%{text}%',
-        textposition='outside'
-    )
-    fig4.update_layout(
-        showlegend=False, height=320,
-        xaxis_title="Number of Services Used (0-7)",
-        xaxis=dict(tickmode='linear', dtick=1)
-    )
-    st.plotly_chart(fig4, use_container_width=True)
+        fig4 = px.bar(
+            eng, x='Services Used', y='Churn Rate (%)',
+            color='Churn Rate (%)',
+            color_continuous_scale=[
+                '#27ae60', '#f1c40f', '#e74c3c'
+            ],
+            text='Churn Rate (%)'
+        )
+        fig4.update_traces(
+            texttemplate='%{text}%',
+            textposition='outside'
+        )
+        fig4.update_layout(
+            showlegend=False, height=320,
+            xaxis_title="Number of Services Used",
+            xaxis=dict(tickmode='linear', dtick=1)
+        )
+        st.plotly_chart(fig4, use_container_width=True)
+    else:
+        st.info("Add service-adoption columns to view the stickiness analysis.")
 
 
 # ══════════════════════════════════════════════════════════
@@ -1462,6 +1522,13 @@ elif page == "Revenue Calculator":
 # PAGE 5 — RECOMMENDATION ENGINE
 # ══════════════════════════════════════════════════════════
 elif page == "Recommendation Engine":
+
+    if is_uploaded_data:
+        st.info(
+            "Recommendations are available only for the demo dataset because "
+            "they rely on its precomputed model scores."
+        )
+        st.stop()
 
     st.title("Recommendation Engine")
     st.markdown(

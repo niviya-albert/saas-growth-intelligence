@@ -16,7 +16,7 @@
 
 ## Live Demo
 
-🚀 **Streamlit deployment in progress — link coming soon**
+🚀 **[Launch the App →](https://saas-growth-intelligence-udj9ecuqzzw6oh8qcbbbmw.streamlit.app)**
 
 Upload your own customer CSV or explore the built-in
 demo analysis of 7,032 real SaaS customers.
@@ -38,7 +38,7 @@ intelligence platform:
 | Basic EDA charts | Survival curves + cohort heatmaps |
 | Accuracy metrics | Business dollar impact |
 | Static notebook | Deployed interactive web app |
-| Telco dataset only | Works on any customer CSV |
+| Telco dataset only | Dashboard analytics for compatible customer CSVs |
 | Manual reporting | Auto-generated executive briefing |
 
 Built across 14 phases with full business
@@ -75,7 +75,7 @@ complete retention intelligence platform.
 | SaaS KPI Engine | MRR, ARR, LTV, CAC, LTV:CAC ratio |
 | Executive Briefing | Auto-generated summary from analysis outputs |
 | Interactive App | 5-page Streamlit dashboard — no code needed |
-| Data Upload | Works on any customer CSV — not just demo data |
+| Data Upload | Validated dashboard analytics for compatible customer CSVs |
 
 ---
 
@@ -129,6 +129,7 @@ the 0–6 month cohort alone generates **38.1% of total
 annual revenue risk** despite representing only 20.9%
 of all customers — making early-stage onboarding the
 single highest-leverage retention intervention.
+
 
 ### Key Finding 3 — Payment Method
 
