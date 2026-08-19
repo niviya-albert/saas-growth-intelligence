@@ -8,7 +8,7 @@
 ![Coverage](https://img.shields.io/badge/Coverage-86%25-success)
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blueviolet)
 
-> An end-to-end customer retention intelligence platform that identifies at-risk accounts, quantifies revenue exposure, and generates AI-powered executive recommendations — built from raw data to deployed production web application.
+> A customer churn analysis that actually answers the question a retention manager would ask: *which specific customers do I contact tomorrow, and what do I say to them?*
 
 ---
 
@@ -16,7 +16,17 @@
 
 🚀 **[Launch the Interactive App →](https://saas-growth-intelligence-udj9ecuqzzw6oh8qcbbbmw.streamlit.app)**
 
-Upload your own customer CSV or explore the built-in demo analysis of 7,032 SaaS accounts.
+Upload your own customer data or explore the built-in demo of 7,032 telecom accounts.
+
+---
+
+## Why I Built This
+
+Most churn prediction projects I came across had the same structure: load the Telco dataset, train a model, get ~80% accuracy, done.
+
+But accuracy doesn't tell a retention team anything useful. It doesn't say *who* to call, *why* that specific customer is at risk, or *what the financial impact* of losing them would be.
+
+I built this to close that gap — to make the output of the model something a non-technical manager could actually act on the same day they opened the dashboard.
 
 ---
 
@@ -213,8 +223,30 @@ Upload via **Data Upload & Scoring** in the web app for instant automated batch 
 
 ---
 
+## Something That Surprised Me
+
+I expected contract type to be the strongest churn predictor — and it was — but the interaction I didn't anticipate was within the fiber optic segment.
+
+Month-to-month customers on **fiber optic** churn at **41.9%**, nearly double the 22.1% rate for DSL month-to-month customers on the same contract. That pattern doesn't show up if you just look at contract type alone.
+
+It suggests either a pricing problem or a product quality issue specific to the fiber tier — something a purely ML-focused analysis would have completely missed without digging into the segment breakdown.
+
+---
+
+## Limitations
+
+Things this project genuinely can't do well:
+
+- **The dataset is from 2013.** Payment methods, contract norms, and customer expectations have changed. The model would need retraining on current data before being used in production.
+- **LTV/CAC calculations use an estimated CAC.** Real implementations need your actual acquisition cost data, which varies by channel.
+- **The What-If simulator holds everything else constant.** In reality, switching a customer from electronic check to auto-pay likely correlates with other behavioural changes the model doesn't capture.
+- **The AI briefing is only as good as the input metrics.** If your churn labelling is inconsistent, the briefing will sound confident about wrong numbers.
+- **It was built on one industry (telecom).** Column names, contract structures, and what counts as "churn" vary significantly across SaaS verticals.
+
+---
+
 ## License
 
-This project is open-source under the MIT License for educational and portfolio demonstration purposes.
+MIT License — free to use for learning, portfolio, or adaptation to your own data.
 
 © 2026 Niviya Albert · [LinkedIn](https://linkedin.com) · niviyalbert1365@gmail.com

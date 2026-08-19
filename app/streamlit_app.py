@@ -44,34 +44,280 @@ st.set_page_config(
 st.markdown(
     """
 <style>
-/* Main container and card styling */
+/* ── FONTS ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── SIDEBAR ─────────────────────────────────────────── */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    border-right: 1px solid rgba(99, 102, 241, 0.2);
+}
+[data-testid="stSidebar"] * {
+    color: #e2e8f0 !important;
+}
+[data-testid="stSidebar"] .stRadio label {
+    color: #cbd5e1 !important;
+    font-size: 0.9rem;
+    padding: 6px 0;
+    transition: color 0.2s;
+}
+[data-testid="stSidebar"] .stRadio label:hover {
+    color: #818cf8 !important;
+}
+[data-testid="stSidebar"] hr {
+    border-color: rgba(99, 102, 241, 0.25) !important;
+}
+[data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.3px;
+}
+
+/* ── PAGE BACKGROUND ─────────────────────────────────── */
+.stApp {
+    background: #f8fafc;
+}
+.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+    max-width: 1400px;
+}
+
+/* ── HEADINGS ────────────────────────────────────────── */
+h1 {
+    font-weight: 700;
+    font-size: 1.9rem !important;
+    color: #0f172a !important;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.25rem !important;
+}
+h2 {
+    font-weight: 600;
+    color: #1e293b !important;
+    letter-spacing: -0.3px;
+}
+h3, h4 {
+    font-weight: 600;
+    color: #334155 !important;
+}
+
+/* ── METRIC CARDS ────────────────────────────────────── */
 [data-testid="metric-container"] {
-    background-color: rgba(30, 34, 45, 0.04);
-    border: 1px solid rgba(120, 130, 150, 0.2);
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+    transition: box-shadow 0.2s, transform 0.2s;
 }
-.stTabs [data-baseweb="tab-list"] {
-    gap: 8px;
+[data-testid="metric-container"]:hover {
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.12);
+    transform: translateY(-2px);
 }
-.stTabs [data-baseweb="tab"] {
-    border-radius: 8px 8px 0 0;
-    padding: 8px 16px;
-    font-weight: 500;
+[data-testid="metric-container"] [data-testid="stMetricLabel"] {
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b !important;
 }
+[data-testid="metric-container"] [data-testid="stMetricValue"] {
+    font-size: 1.7rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+}
+[data-testid="metric-container"] [data-testid="stMetricDelta"] {
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+}
+
+/* ── CONTENT CARDS ───────────────────────────────────── */
 .report-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 18px;
+    border-radius: 14px;
+    padding: 22px 24px;
     margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+    transition: box-shadow 0.2s, border-color 0.2s;
 }
-.badge-critical { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
-.badge-high { background: #ffedd5; color: #9a3412; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
-.badge-medium { background: #fef9c3; color: #854d0e; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
-.badge-low { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
+.report-card:hover {
+    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+.report-card h4 {
+    color: #1e293b !important;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.report-card p, .report-card li {
+    color: #475569;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.report-card ul {
+    padding-left: 1.2rem;
+    margin-top: 8px;
+}
+.report-card li {
+    margin-bottom: 4px;
+}
+
+/* ── ACCENT DIVIDER ──────────────────────────────────── */
+hr {
+    border: none;
+    border-top: 1px solid #e2e8f0 !important;
+    margin: 1.5rem 0 !important;
+}
+
+/* ── BUTTONS ─────────────────────────────────────────── */
+.stButton > button {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #ffffff !important;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    letter-spacing: 0.01em;
+    transition: box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+.stButton > button:hover {
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+    transform: translateY(-1px);
+}
+.stButton > button:active {
+    transform: translateY(0);
+}
+
+/* ── DATAFRAMES ──────────────────────────────────────── */
+[data-testid="stDataFrame"] {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+}
+
+/* ── TABS ────────────────────────────────────────────── */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 6px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    padding: 4px;
+}
+.stTabs [data-baseweb="tab"] {
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 500;
+    color: #64748b;
+    border: none;
+    background: transparent;
+}
+.stTabs [aria-selected="true"] {
+    background: #ffffff !important;
+    color: #4f46e5 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 1px 4px rgba(15,23,42,0.08);
+}
+
+/* ── ALERTS & INFO BOXES ─────────────────────────────── */
+[data-testid="stAlert"] {
+    border-radius: 12px;
+    border-left-width: 4px;
+}
+
+/* ── SELECTBOX & INPUTS ──────────────────────────────── */
+[data-testid="stSelectbox"] > div > div,
+[data-testid="stTextInput"] > div > div > input {
+    border-radius: 10px !important;
+    border-color: #e2e8f0 !important;
+    font-size: 0.9rem;
+}
+
+/* ── FILE UPLOADER ───────────────────────────────────── */
+[data-testid="stFileUploader"] {
+    border-radius: 14px;
+}
+[data-testid="stFileUploader"] > div {
+    border: 2px dashed #c7d2fe !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, #eef2ff 0%, #f8faff 100%) !important;
+    padding: 1.5rem !important;
+    transition: border-color 0.2s, background 0.2s;
+}
+[data-testid="stFileUploader"] > div:hover {
+    border-color: #6366f1 !important;
+    background: linear-gradient(135deg, #e0e7ff 0%, #eef2ff 100%) !important;
+}
+
+/* ── EXPANDERS ───────────────────────────────────────── */
+[data-testid="stExpander"] {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+[data-testid="stExpander"] summary {
+    font-weight: 500;
+    color: #475569;
+    padding: 12px 16px;
+}
+
+/* ── RISK BADGES ─────────────────────────────────────── */
+.badge-critical {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    color: #991b1b;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: 1px solid #fecaca;
+}
+.badge-high {
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    color: #9a3412;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: 1px solid #fed7aa;
+}
+.badge-medium {
+    background: linear-gradient(135deg, #fefce8, #fef9c3);
+    color: #854d0e;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: 1px solid #fde68a;
+}
+.badge-low {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    color: #166534;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: 1px solid #bbf7d0;
+}
+
+/* ── SPINNER ─────────────────────────────────────────── */
+[data-testid="stSpinner"] {
+    color: #6366f1;
+}
+
+/* ── PLOTLY CHARTS ───────────────────────────────────── */
+[data-testid="stPlotlyChart"] {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+}
 </style>
 """,
     unsafe_allow_html=True,
@@ -131,8 +377,8 @@ risk_counts = {
 }
 
 # ── SIDEBAR NAVIGATION ───────────────────────────────────────
-st.sidebar.title("📊 SaaS Growth\nIntelligence")
-st.sidebar.caption("Predictive Retention & Revenue Platform")
+st.sidebar.title("SaaS Growth Intelligence")
+st.sidebar.caption("Customer churn analysis & retention dashboard")
 st.sidebar.markdown("---")
 
 page = st.sidebar.radio(
@@ -156,8 +402,7 @@ st.sidebar.markdown(f"**Critical Alerts:** {risk_counts['Critical']:,} accounts"
 st.sidebar.markdown(f"**Annual Rev at Risk:** ${kpis['churn_arr']/1e6:.2f}M")
 st.sidebar.markdown("---")
 st.sidebar.caption(
-    "Built with Python · Scikit-Learn · Gemini AI · Streamlit\n"
-    "Production ML Portfolio Architecture"
+    "Built by Niviya Albert · Python, Scikit-Learn, Streamlit, Gemini AI"
 )
 
 
@@ -165,124 +410,178 @@ st.sidebar.caption(
 # PAGE 0 — DATA UPLOAD & DYNAMIC SCORING
 # ═════════════════════════════════════════════════════════════
 if page == "Data Upload & Scoring":
-    st.title("Data Upload & Live ML Risk Scoring")
+    st.title("Data Upload & Customer Risk Scoring")
     st.markdown(
-        "Upload any customer dataset to run **dynamic batch feature engineering, "
-        "ensemble churn prediction, and revenue risk scoring** in real time."
+        "Upload a customer CSV to see which accounts are at risk, why, and what to do about it."
     )
     st.markdown("---")
 
-    col_opt1, col_opt2 = st.columns(2)
+    # ── STATUS BANNER ─────────────────────────────────────────
+    if is_uploaded:
+        st.success(
+            f"🟢 **Active Dataset:** Uploaded — {kpis['total_customers']:,} accounts scored | "
+            f"Churn Rate: **{kpis['churn_rate']}%** | "
+            f"Critical ARR Exposure: **${kpis['churn_arr']/1e6:.2f}M**"
+        )
+    else:
+        st.info("🔵 **Active Dataset:** Built-in Telco Demo (7,032 accounts) — Upload your data below or keep exploring the demo.")
+
+    st.markdown("---")
+
+    # ── OPTION CARDS ──────────────────────────────────────────
+    col_opt1, col_opt2 = st.columns(2, gap="large")
 
     with col_opt1:
-        st.subheader("Option 1 — Built-in Telco Demo")
         st.markdown(
-            "Explore pre-trained analysis of **7,032 SaaS accounts** with pre-calibrated "
-            "survival curves, cohort dynamics, and Gemini AI briefings."
+            """
+            <div class="report-card">
+            <h4>🔵 &nbsp;Option 1 — Built-in Telco Demo</h4>
+            <p>Explore a full analysis of <strong>7,032 real telecom customers</strong> — retention trends,
+            churn drivers, revenue impact, and an AI-written executive summary.</p>
+            <ul>
+              <li>✅ No file upload needed — works immediately</li>
+              <li>✅ All 6 dashboard pages enabled</li>
+              <li>✅ Executive briefing pre-generated</li>
+            </ul>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        if st.button("Load Telco Demo Dataset", use_container_width=True):
+        if st.button("▶  Load Telco Demo Dataset", use_container_width=True):
             st.session_state["data_mode"] = "demo"
             st.session_state.pop("uploaded_df", None)
             st.session_state.pop("uploaded_risk_df", None)
-            st.success("Loaded Telco Demo dataset. Navigate to Executive Dashboard!")
+            st.success("✅ Demo dataset active. Navigate to Executive Dashboard!")
             st.rerun()
 
     with col_opt2:
-        st.subheader("Option 2 — Upload Your Customer CSV")
         st.markdown(
-            "Upload a custom CSV. Our production ML pipeline will clean, extract 30 features, "
-            "and compute individual risk profiles on the fly."
+            """
+            <div class="report-card">
+            <h4>🟢 &nbsp;Option 2 — Upload Your Customer CSV</h4>
+            <p>Upload your own customer CSV and get <strong>individual churn risk scores
+            and revenue exposure</strong> calculated for every account automatically.</p>
+            <ul>
+              <li>✅ Automatic data validation & cleaning</li>
+              <li>✅ What-If retention scenario simulator</li>
+              <li>✅ Full revenue exposure breakdown by risk tier</li>
+            </ul>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
-    with st.expander("ℹ View Expected CSV Schema & Sample", expanded=False):
-        st.markdown(
-            "The system accepts standard customer subscription exports. "
-            "Minimal required columns: `customerID`, `tenure`, `MonthlyCharges`, `TotalCharges`, `Contract`, `PaymentMethod`, `Churn`."
-        )
-        sample_spec = pd.DataFrame(
-            {
-                "Column": [
-                    "customerID",
-                    "tenure",
-                    "MonthlyCharges",
-                    "TotalCharges",
-                    "Contract",
-                    "PaymentMethod",
-                    "Churn",
-                    "InternetService",
-                    "TechSupport",
-                ],
-                "Type": [
-                    "String",
-                    "Integer (months)",
-                    "Float ($)",
-                    "Float ($)",
-                    "String (Month-to-month/One year/Two year)",
-                    "String",
-                    "Yes/No or 1/0",
-                    "String (Optional)",
-                    "Yes/No (Optional)",
-                ],
-                "Example": [
-                    "CUST-8491",
-                    "14",
-                    "75.50",
-                    "1057.00",
-                    "Month-to-month",
-                    "Electronic check",
-                    "Yes",
-                    "Fiber optic",
-                    "No",
-                ],
-            }
-        )
-        st.dataframe(sample_spec, use_container_width=True, hide_index=True)
+    st.markdown("---")
 
-    uploaded_file = st.file_uploader(
-        "Upload Customer CSV for Live Inference", type=["csv"], help="Upload CSV up to 200MB"
-    )
+    # ── UPLOAD ZONE ───────────────────────────────────────────
+    st.subheader("📂 Upload Customer Data")
 
+    upload_col, schema_col = st.columns([3, 2], gap="large")
+
+    with upload_col:
+        uploaded_file = st.file_uploader(
+            "Drop your CSV here or click to browse",
+            type=["csv"],
+            help="Accepts CSV files up to 200MB. Required columns: customerID, tenure, MonthlyCharges, TotalCharges, Contract, PaymentMethod, Churn.",
+            label_visibility="collapsed",
+        )
+
+        if uploaded_file is None:
+            st.caption("📋 **Required columns:** `customerID` · `tenure` · `MonthlyCharges` · `TotalCharges` · `Contract` · `PaymentMethod` · `Churn`")
+
+    with schema_col:
+        with st.expander("📖 View Full Column Schema", expanded=False):
+            sample_spec = pd.DataFrame(
+                {
+                    "Column": [
+                        "customerID", "tenure", "MonthlyCharges",
+                        "TotalCharges", "Contract", "PaymentMethod",
+                        "Churn", "InternetService", "TechSupport",
+                    ],
+                    "Type": [
+                        "String", "Integer (months)", "Float ($)",
+                        "Float ($)", "Month-to-month / One year / Two year",
+                        "String", "Yes/No or 1/0",
+                        "String (Optional)", "Yes/No (Optional)",
+                    ],
+                    "Example": [
+                        "CUST-8491", "14", "75.50",
+                        "1057.00", "Month-to-month",
+                        "Electronic check", "Yes",
+                        "Fiber optic", "No",
+                    ],
+                }
+            )
+            st.dataframe(sample_spec, use_container_width=True, hide_index=True)
+
+    # ── FILE PROCESSING ───────────────────────────────────────
     if uploaded_file is not None:
         try:
             raw_input_df = pd.read_csv(uploaded_file)
-            st.markdown("### Raw Data Preview")
-            st.dataframe(raw_input_df.head(4), use_container_width=True)
 
-            with st.spinner("Executing data validation, feature engineering, and ensemble risk scoring..."):
+            # Preview
+            st.markdown("#### Raw Data Preview")
+            st.dataframe(raw_input_df.head(5), use_container_width=True)
+            st.caption(f"Loaded **{len(raw_input_df):,} rows × {len(raw_input_df.columns)} columns** from `{uploaded_file.name}`")
+
+            st.markdown("---")
+
+            # Processing pipeline
+            with st.spinner("🔄 Validating and scoring your customers..."):
                 cleaned_user_df, errors, dropped = clean_customer_data(raw_input_df, min_rows=5)
 
                 if errors:
-                    st.error("Validation Errors: " + " | ".join(errors))
+                    st.error("⚠️ **Validation Failed:** " + " | ".join(errors))
                 else:
-                    # Dynamically score with trained ML model ensemble!
                     scored_user_df = scorer.score_dataframe(cleaned_user_df)
 
                     st.session_state["uploaded_df"] = cleaned_user_df
                     st.session_state["uploaded_risk_df"] = scored_user_df
                     st.session_state["data_mode"] = "upload"
 
-                    st.success(
-                        f"✅ Successfully processed and scored **{len(cleaned_user_df):,} customers** "
-                        f"(dropped {dropped} invalid rows). Real ML predictions generated!"
+            if not errors:
+                # Success header
+                st.success(
+                    f"✅ **Done!** {len(cleaned_user_df):,} customers scored "
+                    f"({dropped} invalid rows removed)."
+                )
+
+                # Results summary metrics
+                st.markdown("#### 📊 Results Summary")
+                u_kpis = compute_saas_kpis(cleaned_user_df)
+                u_crit = int((scored_user_df["risk_level"] == "Critical").sum())
+                u_high = int((scored_user_df["risk_level"] == "High").sum())
+                u_crit_arr = scored_user_df[scored_user_df["risk_level"] == "Critical"]["annual_revenue_risk"].sum()
+
+                q1, q2, q3, q4, q5 = st.columns(5)
+                q1.metric("📋 Accounts Scored", f"{u_kpis['total_customers']:,}")
+                q2.metric("📉 Churn Rate", f"{u_kpis['churn_rate']}%")
+                q3.metric("🔴 Critical Risk", f"{u_crit:,}")
+                q4.metric("🟠 High Risk", f"{u_high:,}")
+                q5.metric("💰 Critical ARR Exposure", f"${u_crit_arr:,.0f}")
+
+                st.markdown("---")
+
+                # Risk tier breakdown table
+                tier_summary = (
+                    scored_user_df.groupby("risk_level")
+                    .agg(
+                        Accounts=("customerID", "count"),
+                        Avg_Score=("risk_score", "mean"),
+                        ARR_Exposure=("annual_revenue_risk", "sum"),
                     )
+                    .reset_index()
+                    .rename(columns={"risk_level": "Risk Tier"})
+                )
+                tier_summary["Avg_Score"] = tier_summary["Avg_Score"].round(1)
+                tier_summary["ARR_Exposure"] = tier_summary["ARR_Exposure"].apply(lambda x: f"${x:,.0f}")
+                tier_summary.columns = ["Risk Tier", "Accounts", "Avg Risk Score", "Annual ARR Exposure"]
+                st.dataframe(tier_summary, use_container_width=True, hide_index=True)
 
-                    # Quick metric banner
-                    u_kpis = compute_saas_kpis(cleaned_user_df)
-                    u_crit = (scored_user_df["risk_level"] == "Critical").sum()
-                    u_crit_arr = scored_user_df[scored_user_df["risk_level"] == "Critical"][
-                        "annual_revenue_risk"
-                    ].sum()
+                st.info("👉 **Your dataset is now active.** Navigate to any page — all analysis, What-If modeling, and revenue calculations now use your data.")
 
-                    q1, q2, q3, q4 = st.columns(4)
-                    q1.metric("Scored Accounts", f"{u_kpis['total_customers']:,}")
-                    q2.metric("Observed Churn Rate", f"{u_kpis['churn_rate']}%")
-                    q3.metric("Critical Risk Accounts", f"{u_crit:,}")
-                    q4.metric("Critical ARR Exposure", f"${u_crit_arr:,.0f}")
-
-                    st.markdown("---")
-                    st.info("👉 Your dataset is now active across all dashboard pages (Explorer, Segments, Calculator, and Playbook)!")
         except Exception as e:  # noqa: BLE001
-            st.error(f"Error processing uploaded CSV: {e!s}")
+            st.error(f"❌ Error processing CSV: {e!s}")
 
 
 # ═════════════════════════════════════════════════════════════
