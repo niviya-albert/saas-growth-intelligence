@@ -50,7 +50,8 @@ Most churn analysis projects on GitHub produce an accuracy score and stop there.
 
 A SaaS telecommunications provider was losing **26.58% of its customers annually** with no systematic method to identify who would leave, why they were leaving, or what interventions would maximize retention.
 
-This represented **$1,669,570 in preventable annual revenue loss** ($139,131 monthly revenue bleeding silently).
+- **Total Preventable Loss:** **$1,669,570 in annual revenue** ($139,131 monthly revenue bleeding silently across 1,869 churned accounts).
+- **Target Financial Recovery:** A 10%–30% targeted intervention success rate protects **$145,321 to $435,964 in recurring ARR annually**.
 
 This platform transforms raw customer event and billing data into an automated, actionable retention engine.
 
@@ -87,11 +88,33 @@ This platform transforms raw customer event and billing data into an automated, 
 | LTV : CAC Ratio | 3.89 : 1 | > 3.0 : 1 | 🟡 Marginal |
 | Net Revenue Retention | 69.47% | > 85% | 🔴 Critical |
 
-### Primary Churn Drivers
+### Portfolio Risk Tier Breakdown (7,032 Accounts)
+
+| Risk Tier | Score Range | Accounts | % Base | Exposed ARR | Recommended SLA |
+|---|---|---|---|---|---|
+| **Critical** | 75–100 | **937** | 13.3% | **$908,609** | 24-hr personal CSM intervention |
+| **High** | 50–74 | 864 | 12.3% | $542,180 | 3-day automated discount / billing fix |
+| **Medium** | 25–49 | 1,421 | 20.2% | $784,520 | 90-day onboarding nurture sequence |
+| **Low** | 0–24 | 3,810 | 54.2% | $1,563,053 | Loyalty perks & annual renewal sync |
+
+> **Concentrated Exposure:** **54.4% of all revenue risk ($908.6K)** is concentrated in just **13.3% of customers (937 accounts)** in the Critical tier.
+
+### Primary Churn Drivers & Feature Stickiness
 
 1. **Contract Type Commitment**: Month-to-month accounts churn at **42.71%** vs **2.85%** for two-year contracts (a 15× risk multiple).
 2. **Onboarding Lifecycle Gap**: Accounts in months 0–6 represent **38.1% of total annual revenue risk** despite being only 20.9% of the customer base.
 3. **Payment Friction**: Manual payment methods (Electronic checks) churn at **45.29%** compared to **15.25%** for automated credit card billing.
+4. **Product Stickiness (Add-ons)**: Accounts without **Tech Support & Online Security** churn at **41.6%**, compared to **14.6%** for accounts with security services attached (a 2.8× retention lift).
+
+### Retention Financial Impact & ROI Modeler
+
+Modeled on a $50,000 targeted retention intervention program:
+
+| Churn Reduction Target | Churned Accounts Saved | Annual ARR Protected | Net Annual Gain ($50K Cost) | ROI % | Payback Period |
+|---|---|---|---|---|---|
+| **10% Reduction** | 187 accounts | **$145,321** | $95,321 | 190.6% | 4.1 months |
+| **20% Reduction** | 374 accounts | **$290,643** | **$240,643** | **481.3%** | **2.1 months** |
+| **30% Reduction** | 561 accounts | **$435,964** | **$385,964** | **771.9%** | **1.4 months** |
 
 ### ML Model Performance & Cost Asymmetry
 
