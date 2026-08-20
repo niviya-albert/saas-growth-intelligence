@@ -158,10 +158,16 @@ class CustomerRiskScorer:
         thresh_path = self.models_dir / "thresholds.json"
 
         if not gb_path.exists():
-            raise FileNotFoundError(
-                f"Trained models not found at {self.models_dir}. "
-                "Run `python -m src.pipeline` or `train_all_models()` first."
-            )
+            try:
+                from ..data.loader import load_clean_data
+                from .train import train_all_models
+                clean_df = load_clean_data()
+                train_all_models(clean_df, save_artifacts=True, models_output_dir=self.models_dir)
+            except Exception:
+                raise FileNotFoundError(
+                    f"Trained models not found at {self.models_dir}. "
+                    "Run `python -m src.pipeline` or `train_all_models()` first."
+                )
 
         self.models["gradient_boosting"] = joblib.load(gb_path)
         self.models["random_forest"] = joblib.load(rf_path)

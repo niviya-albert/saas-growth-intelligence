@@ -18,11 +18,9 @@ __pycache__/
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
 
-# Local data and trained models
-data/raw/
-data/cleaned/
-models/*.pkl
-models/*.joblib
+# Local data and trained models (tracked for Streamlit deployment)
+# Large scratch or temporary files
+*.tmp
 
 # Build and editor files
 dist/
