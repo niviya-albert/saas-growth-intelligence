@@ -20,6 +20,7 @@ __pycache__/
 
 # Local data and trained models
 data/raw/
+data/cleaned/
 models/*.pkl
 models/*.joblib
 
@@ -29,6 +30,10 @@ build/
 *.egg-info/
 .vscode/
 *.code-workspace
+
+# Test coverage
+.coverage
+.coverage.*
 
 # Operating-system files
 .DS_Store
