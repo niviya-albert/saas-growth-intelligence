@@ -249,4 +249,4 @@ Things this project genuinely can't do well:
 
 MIT License — free to use for learning, portfolio, or adaptation to your own data.
 
-© 2026 Niviya Albert · [LinkedIn](https://linkedin.com) · niviyalbert1365@gmail.com
+© 2026 Niviya Albert · [LinkedIn](https://www.linkedin.com/in/niviya-albert-271a5333a/) · niviyalbert1365@gmail.com

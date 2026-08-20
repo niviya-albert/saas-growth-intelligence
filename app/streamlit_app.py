@@ -401,8 +401,8 @@ st.sidebar.markdown(f"**Churn Rate:** {kpis['churn_rate']}%")
 st.sidebar.markdown(f"**Critical Alerts:** {risk_counts['Critical']:,} accounts")
 st.sidebar.markdown(f"**Annual Rev at Risk:** ${kpis['churn_arr']/1e6:.2f}M")
 st.sidebar.markdown("---")
-st.sidebar.caption(
-    "Built by Niviya Albert · Python, Scikit-Learn, Streamlit, Gemini AI"
+st.sidebar.markdown(
+    "Built by **[Niviya Albert](https://www.linkedin.com/in/niviya-albert-271a5333a/)** · Python, Scikit-Learn, Streamlit, Gemini AI"
 )
 
 
